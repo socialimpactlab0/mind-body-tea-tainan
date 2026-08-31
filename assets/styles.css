@@ -93,16 +93,16 @@ button, input, select { font: inherit; }
 .hero h1 {
   margin: 0;
   color: #18281f;
-  font-size: clamp(48px, 5.1vw, 76px);
-  letter-spacing: .025em;
-  line-height: 1.14;
+  font-size: clamp(42px, 4.25vw, 61px);
+  letter-spacing: .012em;
+  line-height: 1.32;
 }
-.hero h1 span { color: var(--peach); font-weight: 400; }
+.hero h1 span { color: var(--peach); font-weight: 600; }
 .hero-lead {
-  margin: 24px 0 0;
+  margin: 20px 0 0;
   color: #4d6456;
-  font: 400 clamp(25px, 2.4vw, 35px)/1.55 var(--serif);
-  letter-spacing: .04em;
+  font: 600 clamp(20px, 1.8vw, 27px)/1.55 var(--serif);
+  letter-spacing: .025em;
 }
 .hero-intro {
   max-width: 580px;
@@ -135,7 +135,7 @@ button, input, select { font: inherit; }
 }
 .doctor-proof div, .doctor-proof strong, .doctor-proof small { display: block; }
 .doctor-proof strong { color: #294637; font: 700 17px/1.35 var(--serif); }
-.doctor-proof small { margin-top: 3px; color: #6b786f; font-size: 11px; }
+.doctor-proof small { margin-top: 4px; color: #6b786f; font-size: 11px; line-height: 1.65; }
 .hero-facts {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -237,21 +237,6 @@ button, input, select { font: inherit; }
 .professor-card .portrait-label strong { font-size: 17px; }
 .professor-card .portrait-label span { margin-left: 4px; font-size: 10px; }
 .professor-card .portrait-label small { font-size: 8px; line-height: 1.45; }
-.stage-note {
-  position: absolute;
-  z-index: 4;
-  top: 20px;
-  right: 0;
-  padding: 11px 20px;
-  border: 1px solid rgba(67,111,90,.25);
-  border-radius: 999px;
-  background: rgba(251,247,239,.94);
-  color: var(--jade-deep);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: .12em;
-}
-
 .section { padding: 104px 0; }
 .section-heading { max-width: 620px; }
 .centered { margin-inline: auto; text-align: center; }
@@ -328,7 +313,7 @@ button, input, select { font: inherit; }
   border-top: 1px solid rgba(67,111,90,.17);
 }
 .topic-card footer strong { font-size: 15px; }
-.topic-card footer span { color: #738077; font-size: 12px; }
+.topic-card footer span { max-width: 68%; color: #738077; font-size: 12px; line-height: 1.55; text-align: right; }
 
 .bridge {
   position: relative;
@@ -500,8 +485,8 @@ input:focus, select:focus { border-color: #688b79; box-shadow: 0 0 0 3px rgba(10
   .topbar { height: 66px; }
   .text-link { display: none; }
   .hero { min-height: auto; padding: 52px 0 70px; }
-  .hero h1 { font-size: 46px; letter-spacing: 0; }
-  .hero-lead { font-size: 25px; }
+  .hero h1 { font-size: 38px; letter-spacing: 0; line-height: 1.36; }
+  .hero-lead { font-size: 21px; }
   .hero-intro { font-size: 14px; }
   .hero-facts { grid-template-columns: 1fr; gap: 13px; padding: 17px 0; }
   .fact, .fact:first-child { padding: 0; border: 0; }
@@ -515,12 +500,12 @@ input:focus, select:focus { border-color: #688b79; box-shadow: 0 0 0 3px rgba(10
   .doctor-card .portrait-label strong { font-size: 21px; }
   .doctor-card .portrait-label small { font-size: 9px; }
   .professor-card .portrait-label { inset: auto 6px 6px; padding: 8px; }
-  .stage-note { top: 13px; right: 2px; bottom: auto; left: auto; padding: 8px 13px; font-size: 9px; white-space: nowrap; }
   .section { padding: 76px 0; }
   .section h2 { font-size: 35px; }
   .topic-grid, .experience, .registration, .faq { grid-template-columns: 1fr; }
   .topic-card { min-height: 410px; padding: 32px; }
   .topic-card footer { inset: auto 32px 30px; align-items: flex-start; flex-direction: column; gap: 5px; }
+  .topic-card footer span { max-width: 100%; text-align: left; }
   .bridge { padding: 72px 22px; }
   .bridge blockquote br { display: none; }
   .experience { gap: 48px; }
@@ -553,7 +538,7 @@ input:focus, select:focus { border-color: #688b79; box-shadow: 0 0 0 3px rgba(10
 }
 
 @media (max-width: 420px) {
-  .hero h1 { font-size: 40px; }
+  .hero h1 { font-size: 33px; }
   .doctor-proof { align-items: flex-start; flex-direction: column; gap: 9px; }
   .portrait-stage { height: 415px; }
   .doctor-card { height: 355px; }
