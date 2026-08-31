@@ -14,10 +14,40 @@
     document.querySelectorAll("[data-participant]")
   );
 
+  const VISITOR_KEY = "tea_event_visitor_id_v1";
+  const SESSION_KEY = "tea_event_session_id_v1";
+  const ATTRIBUTION_KEY = "tea_event_attribution_v1";
+
+  const visitorId = getOrCreateId(localStorage, VISITOR_KEY);
+  const sessionId = getOrCreateId(sessionStorage, SESSION_KEY);
+  const tracking = getTracking();
+  let formStarted = false;
+
   function gasUrlIsReady() {
     return /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(
       String(config.GAS_WEB_APP_URL || "").trim()
     );
+  }
+
+  function createId() {
+    if (window.crypto && typeof window.crypto.randomUUID === "function") {
+      return window.crypto.randomUUID();
+    }
+
+    return "v-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 12);
+  }
+
+  function getOrCreateId(storage, key) {
+    try {
+      let value = storage.getItem(key);
+      if (!value) {
+        value = createId();
+        storage.setItem(key, value);
+      }
+      return value;
+    } catch (error) {
+      return createId();
+    }
   }
 
   function setLoading(loading) {
@@ -30,14 +60,84 @@
     return String(value || "").replace(/[^0-9]/g, "");
   }
 
+  function readSavedAttribution() {
+    try {
+      const raw = localStorage.getItem(ATTRIBUTION_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (error) {
+      return {};
+    }
+  }
+
+  function saveAttribution(value) {
+    try {
+      localStorage.setItem(ATTRIBUTION_KEY, JSON.stringify(value));
+    } catch (error) {
+      // 隱私模式或瀏覽器禁止儲存時，仍可使用當次網址的追蹤參數。
+    }
+  }
+
   function getTracking() {
     const params = new URLSearchParams(window.location.search);
-    return {
+    const saved = readSavedAttribution();
+    const current = {
       utmSource: params.get("utm_source") || "",
       utmMedium: params.get("utm_medium") || "",
       utmCampaign: params.get("utm_campaign") || "",
-      utmContent: params.get("utm_content") || ""
+      utmContent: params.get("utm_content") || "",
+      fbclid: params.get("fbclid") || ""
     };
+
+    const hasCurrentAttribution = Object.values(current).some(Boolean);
+    if (hasCurrentAttribution) {
+      saveAttribution(current);
+      return current;
+    }
+
+    return {
+      utmSource: saved.utmSource || "",
+      utmMedium: saved.utmMedium || "",
+      utmCampaign: saved.utmCampaign || "",
+      utmContent: saved.utmContent || "",
+      fbclid: saved.fbclid || ""
+    };
+  }
+
+  function getDeviceType() {
+    const ua = navigator.userAgent || "";
+    if (/iPad|Tablet|PlayBook|Silk/i.test(ua)) return "tablet";
+    if (/Mobi|Android|iPhone|iPod/i.test(ua)) return "mobile";
+    return "desktop";
+  }
+
+  function trackEvent(eventName, detail) {
+    if (!gasUrlIsReady()) return Promise.resolve();
+
+    const extra = detail || {};
+    const payload = new URLSearchParams({
+      requestType: "track_event",
+      eventName: eventName,
+      eventId: config.EVENT_ID || "mind-body-tea",
+      visitorId: visitorId,
+      sessionId: sessionId,
+      pageUrl: window.location.href,
+      referrer: document.referrer || "",
+      device: getDeviceType(),
+      userAgent: navigator.userAgent || "",
+      clientTime: new Date().toISOString(),
+      recordId: String(extra.recordId || ""),
+      eventDetail: JSON.stringify(extra),
+      ...tracking
+    });
+
+    return fetch(config.GAS_WEB_APP_URL, {
+      method: "POST",
+      body: payload,
+      redirect: "follow",
+      keepalive: true
+    }).catch(function (error) {
+      console.warn("Tracking event failed:", eventName, error);
+    });
   }
 
   function syncParticipantGroups() {
@@ -69,6 +169,28 @@
 
     return participants;
   }
+
+  function markFormStarted() {
+    if (formStarted) return;
+    formStarted = true;
+    trackEvent("form_start", {
+      field: document.activeElement && document.activeElement.name
+        ? document.activeElement.name
+        : ""
+    });
+  }
+
+  document.querySelectorAll('a[href="#registration"]').forEach(function (link) {
+    link.addEventListener("click", function () {
+      trackEvent("registration_click", {
+        label: String(link.textContent || "").trim().slice(0, 100),
+        className: String(link.className || "").slice(0, 150)
+      });
+    });
+  });
+
+  form.addEventListener("input", markFormStarted, { once: false });
+  form.addEventListener("change", markFormStarted, { once: false });
 
   partySizeSelect.addEventListener("change", syncParticipantGroups);
   syncParticipantGroups();
@@ -111,8 +233,11 @@
       participants: JSON.stringify(participants),
       website: String(formData.get("website") || ""),
       pageUrl: window.location.href,
+      referrer: document.referrer || "",
+      visitorId: visitorId,
+      sessionId: sessionId,
       userAgent: navigator.userAgent,
-      ...getTracking()
+      ...tracking
     });
 
     setLoading(true);
@@ -132,6 +257,11 @@
         return;
       }
 
+      trackEvent("registration_success", {
+        recordId: result.recordId || "",
+        partySize: partySize
+      });
+
       form.hidden = true;
       successState.hidden = false;
       successState.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -145,10 +275,15 @@
 
   newRegistration.addEventListener("click", function () {
     form.reset();
+    formStarted = false;
     syncParticipantGroups();
     successState.hidden = true;
     form.hidden = false;
     status.textContent = "";
     form.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+
+  trackEvent("page_view", {
+    title: document.title
   });
 })();
