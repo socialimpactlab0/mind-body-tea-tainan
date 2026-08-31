@@ -1,5 +1,7 @@
-const SHEET_NAME = "報名名單";
-const HEADERS = [
+const REGISTRATION_SHEET_NAME = "報名名單";
+const TRACKING_SHEET_NAME = "流量紀錄";
+
+const REGISTRATION_HEADERS = [
   "報名時間",
   "報名編號",
   "活動編號",
@@ -22,12 +24,44 @@ const HEADERS = [
   "UTM素材",
   "報名頁網址",
   "瀏覽器資訊",
-  "狀態"
+  "狀態",
+  "訪客編號",
+  "工作階段編號",
+  "FB點擊編號",
+  "來源頁"
 ];
 
+const TRACKING_HEADERS = [
+  "事件時間",
+  "事件編號",
+  "事件名稱",
+  "訪客編號",
+  "工作階段編號",
+  "活動編號",
+  "UTM來源",
+  "UTM媒介",
+  "UTM活動",
+  "UTM素材",
+  "FB點擊編號",
+  "頁面網址",
+  "來源頁",
+  "裝置",
+  "瀏覽器資訊",
+  "前端時間",
+  "報名編號",
+  "事件細節"
+];
+
+const ALLOWED_TRACKING_EVENTS = new Set([
+  "page_view",
+  "registration_click",
+  "form_start",
+  "registration_success"
+]);
+
 /**
- * 第一次使用時，在Apps Script編輯器手動執行一次。
- * 會記住目前試算表並建立「報名名單」工作表。
+ * 第一次使用時，在 Apps Script 編輯器手動執行一次。
+ * 會記住目前試算表，並建立／補齊「報名名單」與「流量紀錄」。
  */
 function setupRegistrationSheet() {
   const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
@@ -38,43 +72,131 @@ function setupRegistrationSheet() {
   PropertiesService.getScriptProperties()
     .setProperty("SPREADSHEET_ID", spreadsheet.getId());
 
-  const sheet = getOrCreateSheet_(spreadsheet);
-  sheet.setFrozenRows(1);
-  sheet.getRange("A:A").setNumberFormat("yyyy/mm/dd hh:mm:ss");
-  sheet.autoResizeColumns(1, HEADERS.length);
+  const registrationSheet = getOrCreateRegistrationSheet_(spreadsheet);
+  const trackingSheet = getOrCreateTrackingSheet_(spreadsheet);
 
-  return "設定完成";
+  registrationSheet.setFrozenRows(1);
+  registrationSheet.getRange("A:A").setNumberFormat("yyyy/mm/dd hh:mm:ss");
+  registrationSheet.autoResizeColumns(1, REGISTRATION_HEADERS.length);
+
+  trackingSheet.setFrozenRows(1);
+  trackingSheet.getRange("A:A").setNumberFormat("yyyy/mm/dd hh:mm:ss");
+  trackingSheet.autoResizeColumns(1, TRACKING_HEADERS.length);
+
+  return "設定完成：報名名單與流量紀錄已就緒";
+}
+
+/**
+ * 若既有專案已執行過 setupRegistrationSheet，也可以單獨執行此函式檢查追蹤表。
+ */
+function setupTrackingSheet() {
+  const spreadsheet = getSpreadsheet_();
+  const trackingSheet = getOrCreateTrackingSheet_(spreadsheet);
+  trackingSheet.setFrozenRows(1);
+  trackingSheet.getRange("A:A").setNumberFormat("yyyy/mm/dd hh:mm:ss");
+  trackingSheet.autoResizeColumns(1, TRACKING_HEADERS.length);
+  return "流量紀錄設定完成";
 }
 
 function doGet() {
   return json_({
     ok: true,
     service: "tea-registration",
-    message: "GAS報名服務運作中"
+    tracking: true,
+    message: "GAS報名與流量追蹤服務運作中"
   });
 }
 
 function doPost(e) {
+  try {
+    if (!e || !e.parameter) {
+      return json_({ ok: false, message: "缺少資料" });
+    }
+
+    if (clean_(e.parameter.requestType, 40) === "track_event") {
+      return handleTrackingEvent_(e.parameter);
+    }
+
+    return handleRegistration_(e.parameter);
+  } catch (error) {
+    console.error(error);
+    return json_({
+      ok: false,
+      message: "系統暫時無法處理，請稍後再試"
+    });
+  }
+}
+
+function handleTrackingEvent_(parameter) {
+  const eventName = clean_(parameter.eventName, 60);
+  if (!ALLOWED_TRACKING_EVENTS.has(eventName)) {
+    return json_({ ok: false, message: "追蹤事件不正確" });
+  }
+
+  const visitorId = safeCell_(clean_(parameter.visitorId, 120));
+  const sessionId = safeCell_(clean_(parameter.sessionId, 120));
+  if (!visitorId || !sessionId) {
+    return json_({ ok: false, message: "缺少匿名追蹤編號" });
+  }
+
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(10000)) {
+    return json_({ ok: false, message: "系統忙碌中，請稍後再試" });
+  }
+
+  try {
+    const spreadsheet = getSpreadsheet_();
+    const sheet = getOrCreateTrackingSheet_(spreadsheet);
+    const eventId = Utilities.getUuid();
+
+    sheet.appendRow([
+      new Date(),
+      eventId,
+      safeCell_(eventName),
+      visitorId,
+      sessionId,
+      safeCell_(clean_(parameter.eventId, 80)),
+      safeCell_(clean_(parameter.utmSource, 120)),
+      safeCell_(clean_(parameter.utmMedium, 120)),
+      safeCell_(clean_(parameter.utmCampaign, 160)),
+      safeCell_(clean_(parameter.utmContent, 160)),
+      safeCell_(clean_(parameter.fbclid, 300)),
+      safeCell_(clean_(parameter.pageUrl, 500)),
+      safeCell_(clean_(parameter.referrer, 500)),
+      safeCell_(clean_(parameter.device, 40)),
+      safeCell_(clean_(parameter.userAgent, 500)),
+      safeCell_(clean_(parameter.clientTime, 80)),
+      safeCell_(clean_(parameter.recordId, 120)),
+      safeCell_(clean_(parameter.eventDetail, 1000))
+    ]);
+
+    return json_({
+      ok: true,
+      eventId: eventId,
+      message: "事件已記錄"
+    });
+  } finally {
+    if (lock.hasLock()) lock.releaseLock();
+  }
+}
+
+function handleRegistration_(parameter) {
   const lock = LockService.getScriptLock();
 
   try {
-    if (!e || !e.parameter) {
-      return json_({ ok: false, message: "缺少報名資料" });
-    }
-
     // 隱藏欄位有值時視為機器人，但仍回傳成功以避免反覆攻擊。
-    if (clean_(e.parameter.website, 100)) {
+    if (clean_(parameter.website, 100)) {
       return json_({ ok: true, ignored: true });
     }
 
-    const eventId = safeCell_(clean_(e.parameter.eventId, 80));
-    const partySize = Number(e.parameter.partySize);
+    const eventId = safeCell_(clean_(parameter.eventId, 80));
+    const partySize = Number(parameter.partySize);
 
     if (!Number.isInteger(partySize) || partySize < 1 || partySize > 4) {
       return json_({ ok: false, message: "參加人數不正確" });
     }
 
-    const participants = parseParticipants_(e.parameter.participants, partySize);
+    const participants = parseParticipants_(parameter.participants, partySize);
     if (!eventId) {
       return json_({ ok: false, message: "活動編號不完整" });
     }
@@ -91,7 +213,7 @@ function doPost(e) {
     }
 
     const spreadsheet = getSpreadsheet_();
-    const sheet = getOrCreateSheet_(spreadsheet);
+    const sheet = getOrCreateRegistrationSheet_(spreadsheet);
 
     // 任一參加者的手機已在同一活動報名，即停止新增，避免重複名單。
     if (hasExistingPhone_(sheet, eventId, phones)) {
@@ -119,25 +241,23 @@ function doPost(e) {
       eventId,
       partySize,
       ...participantCells,
-      safeCell_(clean_(e.parameter.utmSource, 120)),
-      safeCell_(clean_(e.parameter.utmMedium, 120)),
-      safeCell_(clean_(e.parameter.utmCampaign, 160)),
-      safeCell_(clean_(e.parameter.utmContent, 160)),
-      safeCell_(clean_(e.parameter.pageUrl, 500)),
-      safeCell_(clean_(e.parameter.userAgent, 500)),
-      "已報名"
+      safeCell_(clean_(parameter.utmSource, 120)),
+      safeCell_(clean_(parameter.utmMedium, 120)),
+      safeCell_(clean_(parameter.utmCampaign, 160)),
+      safeCell_(clean_(parameter.utmContent, 160)),
+      safeCell_(clean_(parameter.pageUrl, 500)),
+      safeCell_(clean_(parameter.userAgent, 500)),
+      "已報名",
+      safeCell_(clean_(parameter.visitorId, 120)),
+      safeCell_(clean_(parameter.sessionId, 120)),
+      safeCell_(clean_(parameter.fbclid, 300)),
+      safeCell_(clean_(parameter.referrer, 500))
     ]);
 
     return json_({
       ok: true,
       recordId: recordId,
       message: "報名成功"
-    });
-  } catch (error) {
-    console.error(error);
-    return json_({
-      ok: false,
-      message: "系統暫時無法處理，請稍後再試"
     });
   } finally {
     if (lock.hasLock()) lock.releaseLock();
@@ -155,26 +275,34 @@ function getSpreadsheet_() {
   return SpreadsheetApp.openById(spreadsheetId);
 }
 
-function getOrCreateSheet_(spreadsheet) {
-  let sheet = spreadsheet.getSheetByName(SHEET_NAME);
-  if (!sheet) sheet = spreadsheet.insertSheet(SHEET_NAME);
-
-  if (sheet.getLastRow() === 0) {
-    sheet.getRange(1, 1, 1, HEADERS.length)
-      .setValues([HEADERS])
-      .setFontWeight("bold")
-      .setBackground("#315746")
-      .setFontColor("#ffffff");
-  }
-
+function getOrCreateRegistrationSheet_(spreadsheet) {
+  let sheet = spreadsheet.getSheetByName(REGISTRATION_SHEET_NAME);
+  if (!sheet) sheet = spreadsheet.insertSheet(REGISTRATION_SHEET_NAME);
+  ensureHeaders_(sheet, REGISTRATION_HEADERS, "#315746");
   return sheet;
+}
+
+function getOrCreateTrackingSheet_(spreadsheet) {
+  let sheet = spreadsheet.getSheetByName(TRACKING_SHEET_NAME);
+  if (!sheet) sheet = spreadsheet.insertSheet(TRACKING_SHEET_NAME);
+  ensureHeaders_(sheet, TRACKING_HEADERS, "#6f5a3e");
+  return sheet;
+}
+
+function ensureHeaders_(sheet, headers, background) {
+  const headerRange = sheet.getRange(1, 1, 1, headers.length);
+  headerRange
+    .setValues([headers])
+    .setFontWeight("bold")
+    .setBackground(background)
+    .setFontColor("#ffffff");
 }
 
 function hasExistingPhone_(sheet, eventId, phones) {
   const lastRow = sheet.getLastRow();
   if (lastRow < 2) return false;
 
-  const rows = sheet.getRange(2, 1, lastRow - 1, HEADERS.length).getDisplayValues();
+  const rows = sheet.getRange(2, 1, lastRow - 1, REGISTRATION_HEADERS.length).getDisplayValues();
   const submittedPhones = new Set(phones);
 
   return rows.some(function(row) {
