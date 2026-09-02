@@ -1,4 +1,20 @@
-/* 2026-09-02：活動費用與安心報名說明 */
+/* 2026-09-02：活動費用說明、色彩對比與手機版閱讀優化 */
+
+:root {
+  --ink-soft: #4f6258;
+  --peach: #a95138;
+  --peach-pale: #f4e8e2;
+}
+
+.button-primary {
+  border-color: #91432f;
+  background: linear-gradient(135deg, #b86649, #97432f);
+  box-shadow: 0 12px 28px rgba(151, 67, 47, .22);
+}
+
+.button-primary:hover {
+  background: linear-gradient(135deg, #aa593f, #873824);
+}
 
 .reassurance {
   padding-top: 28px;
@@ -9,9 +25,9 @@
   display: grid;
   grid-template-columns: 1.08fr .92fr;
   overflow: hidden;
-  border: 1px solid rgba(67, 111, 90, .16);
+  border: 1px solid rgba(67, 111, 90, .18);
   border-radius: 34px;
-  background: rgba(255, 253, 248, .9);
+  background: rgba(255, 253, 248, .92);
   box-shadow: 0 24px 60px rgba(53, 73, 62, .09);
 }
 
@@ -19,7 +35,7 @@
   padding: 54px 58px;
   background:
     radial-gradient(circle at 8% 12%, rgba(231, 239, 233, .92), transparent 20rem),
-    rgba(255, 253, 248, .9);
+    rgba(255, 253, 248, .92);
 }
 
 .reassurance-copy h2 {
@@ -49,7 +65,7 @@
   flex-direction: column;
   justify-content: center;
   padding: 50px 46px;
-  background: linear-gradient(145deg, #f5e8e0, #efe0d6);
+  background: linear-gradient(145deg, #f5f2e9, #e7eee9);
 }
 
 .reassurance-note-badge {
@@ -59,8 +75,8 @@
   align-items: center;
   padding: 0 12px;
   border-radius: 999px;
-  background: rgba(255, 253, 248, .82);
-  color: #8d503a;
+  background: rgba(255, 253, 248, .88);
+  color: #884b36;
   font-size: 11px;
   font-weight: 800;
   letter-spacing: .12em;
@@ -68,7 +84,7 @@
 
 .reassurance-note h3 {
   margin: 18px 0 0;
-  color: #5f3e31;
+  color: #334d3e;
   font: 700 27px/1.55 var(--serif);
 }
 
@@ -83,7 +99,7 @@
 .reassurance-list li {
   display: flex;
   gap: 11px;
-  color: #6b554b;
+  color: #506158;
   font-size: 14px;
   line-height: 1.75;
 }
@@ -98,8 +114,8 @@
 .reassurance-contact {
   margin: 24px 0 0;
   padding-top: 20px;
-  border-top: 1px solid rgba(142, 92, 70, .18);
-  color: #725b50;
+  border-top: 1px solid rgba(67, 111, 90, .18);
+  color: #5d6d64;
   font-size: 13px;
   line-height: 1.8;
 }
@@ -112,7 +128,7 @@
 }
 
 .reassurance-phones a {
-  color: #764734;
+  color: #7b3f2e;
   font-size: 16px;
   font-weight: 800;
 }
@@ -134,39 +150,765 @@
 }
 
 @media (max-width: 760px) {
+  html {
+    scroll-padding-top: 68px;
+  }
+
+  body {
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
+    -webkit-text-size-adjust: 100%;
+  }
+
+  a,
+  button,
+  input,
+  select,
+  summary {
+    -webkit-tap-highlight-color: rgba(49, 87, 70, .12);
+  }
+
+  .topbar {
+    position: sticky;
+    z-index: 40;
+    top: 0;
+    height: 58px;
+    border-bottom-color: rgba(67, 111, 90, .16);
+    background: rgba(251, 247, 239, .94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .wordmark {
+    gap: 8px;
+    font-size: 16px;
+  }
+
+  .leaf-mark {
+    width: 30px;
+    height: 30px;
+  }
+
+  .hero {
+    gap: 18px;
+    padding: 26px 0 48px;
+  }
+
+  .hero h1 {
+    font-size: clamp(31px, 9vw, 37px);
+    line-height: 1.32;
+    text-wrap: balance;
+  }
+
+  .eyebrow {
+    gap: 8px;
+    margin-bottom: 14px;
+    font-size: 10px;
+    letter-spacing: .1em;
+  }
+
+  .eyebrow span {
+    width: 20px;
+  }
+
+  .hero-lead {
+    margin-top: 16px;
+    font-size: 19px;
+    line-height: 1.55;
+  }
+
+  .hero-intro {
+    margin-top: 12px;
+    color: #4f6258;
+    font-size: 15px;
+    line-height: 1.82;
+  }
+
+  .doctor-proof {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .doctor-proof > span {
+    margin-top: 2px;
+    font-size: 10px;
+  }
+
+  .doctor-proof strong {
+    font-size: 18px;
+  }
+
+  .doctor-proof small {
+    margin-top: 5px;
+    color: #56685e;
+    font-size: 13px;
+    line-height: 1.62;
+  }
+
+  .hero-facts {
+    gap: 0;
+    margin-top: 20px;
+    padding: 7px 0;
+  }
+
+  .fact,
+  .fact:first-child {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 8px;
+    align-items: start;
+    padding: 10px 0;
+    border: 0;
+    border-bottom: 1px dashed rgba(67, 111, 90, .17);
+  }
+
+  .fact:last-child {
+    border-bottom: 0;
+  }
+
+  .fact small {
+    padding-top: 2px;
+    font-size: 11px;
+  }
+
+  .fact strong {
+    overflow: visible;
+    margin-top: 0;
+    color: #294637;
+    font-size: 15px;
+    line-height: 1.5;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  .hero-actions {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 9px;
+    margin-top: 18px;
+  }
+
+  .hero-actions .button {
+    width: 100%;
+  }
+
+  .hero-actions span {
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .culture-disclosure {
+    margin-top: 13px;
+    padding-top: 12px;
+    color: #596b61;
+    font-size: 13px;
+    line-height: 1.72;
+  }
+
+  .portrait-stage {
+    height: 350px;
+    margin-top: 2px;
+  }
+
+  .doctor-card {
+    top: 2px;
+    width: 72%;
+    height: 322px;
+    border-radius: 140px 140px 22px 22px;
+  }
+
+  .professor-card {
+    right: 0;
+    bottom: 0;
+    width: 35%;
+    height: 188px;
+    border-radius: 82px 82px 18px 18px;
+  }
+
+  .doctor-card .portrait-label {
+    inset: auto 8px 8px;
+    padding: 10px 11px;
+  }
+
+  .doctor-card .portrait-label strong {
+    font-size: 21px;
+  }
+
+  .doctor-card .portrait-label span {
+    font-size: 11px;
+  }
+
+  .professor-card .portrait-label {
+    inset: auto 5px 5px;
+    padding: 7px 8px;
+  }
+
+  .professor-card .portrait-label strong {
+    font-size: 14px;
+  }
+
+  .professor-card .portrait-label span {
+    margin-top: 2px;
+    font-size: 9px;
+    line-height: 1.35;
+  }
+
+  .section {
+    padding: 58px 0;
+  }
+
+  .section-kicker {
+    margin-bottom: 10px;
+    font-size: 11px;
+  }
+
+  .section h2 {
+    font-size: 30px;
+    line-height: 1.4;
+    text-wrap: balance;
+  }
+
+  .section-heading > p {
+    margin-top: 14px;
+    color: #53665b;
+    font-size: 15px;
+    line-height: 1.78;
+  }
+
+  .takeaways {
+    padding: 58px 0;
+  }
+
+  .benefit-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+    margin-top: 30px;
+  }
+
+  .benefit-card {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    gap: 4px 13px;
+    min-height: 0;
+    padding: 20px 18px;
+    border-radius: 18px;
+  }
+
+  .benefit-card::after {
+    display: none;
+  }
+
+  .benefit-number {
+    grid-row: 1 / 3;
+    align-self: start;
+    min-width: 38px;
+    height: 28px;
+  }
+
+  .benefit-card h3 {
+    margin: 0;
+    font-size: 19px;
+    line-height: 1.52;
+  }
+
+  .benefit-card p {
+    margin: 5px 0 0;
+    font-size: 14px;
+    line-height: 1.72;
+  }
+
+  .takeaway-actions {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 25px;
+    text-align: center;
+  }
+
+  .takeaway-actions .button {
+    width: 100%;
+  }
+
+  .takeaway-actions span {
+    font-size: 13px;
+  }
+
+  .topics {
+    padding-top: 54px;
+  }
+
+  .topic-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 34px;
+  }
+
+  .topic-card,
+  .topic-card.health,
+  .topic-card.culture {
+    min-height: 0;
+    padding: 24px 20px;
+    border-radius: 22px;
+  }
+
+  .topic-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .topic-number {
+    margin: 18px 0 7px;
+  }
+
+  .topic-card h3,
+  .topic-card.culture h3 {
+    font-size: 24px;
+    line-height: 1.45;
+  }
+
+  .topic-card > p:not(.topic-number) {
+    font-size: 15px;
+    line-height: 1.78;
+  }
+
+  .topic-card footer,
+  .topic-card.culture footer {
+    position: static;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 22px;
+    padding-top: 16px;
+  }
+
+  .topic-card footer strong {
+    font-size: 16px;
+  }
+
+  .topic-card footer span,
+  .topic-card.culture footer span {
+    max-width: 100%;
+    color: #5d6e64;
+    font-size: 13px;
+    line-height: 1.55;
+    text-align: left;
+  }
+
+  .bridge {
+    padding: 52px 20px;
+  }
+
+  .bridge-mark {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 20px;
+  }
+
+  .bridge blockquote {
+    font-size: 25px;
+    line-height: 1.55;
+    text-wrap: balance;
+  }
+
+  .bridge p {
+    margin-top: 18px;
+    font-size: 14px;
+    line-height: 1.82;
+  }
+
+  .experience {
+    gap: 34px;
+  }
+
+  .suitable ul {
+    gap: 15px;
+    margin-top: 26px;
+  }
+
+  .suitable li {
+    font-size: 15px;
+    line-height: 1.68;
+  }
+
+  .schedule-card {
+    padding: 24px 20px;
+    border-radius: 24px;
+  }
+
+  .schedule-card header strong {
+    font-size: 19px;
+  }
+
+  .schedule-card li {
+    grid-template-columns: 98px minmax(0, 1fr);
+    min-height: 62px;
+  }
+
+  .schedule-card time {
+    font-size: 13px;
+  }
+
+  .schedule-card li strong {
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  .venue {
+    padding: 17px;
+  }
+
+  .venue strong {
+    font-size: 16px;
+  }
+
+  .venue small {
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
   .reassurance {
-    padding-top: 8px;
-    padding-bottom: 70px;
+    padding: 4px 0 62px;
   }
 
   .reassurance-card {
-    border-radius: 27px;
+    border-radius: 24px;
   }
 
-  .reassurance-copy,
   .reassurance-note {
-    padding: 34px 25px;
+    order: -1;
+    padding: 28px 21px;
+    background: linear-gradient(145deg, #f5f2e9, #e7eee9);
+  }
+
+  .reassurance-copy {
+    padding: 28px 21px 31px;
+    background: rgba(255, 253, 248, .94);
   }
 
   .reassurance-copy h2 {
-    font-size: 34px;
+    font-size: 28px;
+    line-height: 1.42;
   }
 
-  .reassurance-copy p {
-    margin-top: 17px;
-    font-size: 14px;
-    line-height: 1.9;
+  .reassurance-copy p,
+  .reassurance-copy p:first-of-type {
+    margin-top: 15px;
+    color: #53665b;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.8;
   }
 
   .reassurance-copy p:first-of-type {
-    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .reassurance-note-badge {
+    min-height: 30px;
+    font-size: 11px;
   }
 
   .reassurance-note h3 {
-    font-size: 24px;
+    margin-top: 15px;
+    font-size: 23px;
+    line-height: 1.5;
+  }
+
+  .reassurance-list {
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .reassurance-list li {
+    font-size: 15px;
+    line-height: 1.68;
+  }
+
+  .reassurance-contact {
+    margin-top: 20px;
+    padding-top: 17px;
+    font-size: 14px;
+    line-height: 1.75;
+  }
+
+  .reassurance-phones {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 13px;
+  }
+
+  .reassurance-phones a {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(67, 111, 90, .2);
+    border-radius: 13px;
+    background: rgba(255, 253, 248, .78);
+    font-size: 17px;
   }
 
   .reassurance-button {
     width: 100%;
+    margin-top: 18px;
+  }
+
+  .registration {
+    gap: 28px;
+    width: calc(100% - 20px);
+    margin-top: 0;
+    padding: 34px 14px 14px;
+    border-radius: 26px;
+  }
+
+  .registration-copy {
+    padding: 0 10px;
+  }
+
+  .registration h2 {
+    font-size: 35px;
+  }
+
+  .registration-copy > p {
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .registration-copy ul {
+    margin-top: 22px;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .form-card {
+    min-height: 0;
+    padding: 24px 16px;
+    border-radius: 20px;
+  }
+
+  .form-heading {
+    margin-bottom: 20px;
+  }
+
+  .form-heading h3,
+  .success-state h3 {
+    font-size: 26px;
+  }
+
+  form > label:not(.consent) {
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  form label > span {
+    font-size: 14px;
+  }
+
+  .form-helper {
+    margin-top: 12px;
+    font-size: 13px;
+  }
+
+  .participant-list {
+    gap: 14px;
+    margin-top: 15px;
+  }
+
+  .participant-group {
+    gap: 13px;
+    padding: 16px 13px;
+    border-radius: 15px;
+  }
+
+  .participant-group legend {
+    font-size: 13px;
+  }
+
+  input[type="text"],
+  input[type="tel"],
+  select {
+    height: 54px;
+    border-radius: 13px;
+    font-size: 16px;
+  }
+
+  .consent {
+    margin-top: 18px;
+  }
+
+  .consent input {
+    width: 19px;
+    height: 19px;
+  }
+
+  .consent span {
+    font-size: 13px;
+    line-height: 1.65;
+  }
+
+  .button {
+    min-height: 56px;
+    padding: 0 20px;
+    font-size: 16px;
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  .faq {
+    gap: 23px;
+  }
+
+  .faq summary {
+    position: relative;
+    padding: 21px 34px 21px 0;
+    font-size: 16px;
+    line-height: 1.55;
+    list-style: none;
+  }
+
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq summary::after {
+    position: absolute;
+    top: 21px;
+    right: 2px;
+    color: var(--jade);
+    content: "＋";
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .faq details[open] summary::after {
+    content: "－";
+  }
+
+  .faq details p {
+    margin-bottom: 20px;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .page-footer {
+    gap: 15px;
+  }
+
+  .page-footer > strong {
+    font-size: 18px;
+  }
+
+  .page-footer div {
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .mobile-cta {
+    inset: auto 12px calc(10px + env(safe-area-inset-bottom));
+    display: flex;
+    min-height: 56px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 18px;
+    font-size: 16px;
+  }
+
+  #registration {
+    scroll-margin-top: 68px;
+  }
+
+  :focus-visible {
+    outline: 3px solid rgba(49, 87, 70, .36);
+    outline-offset: 3px;
+  }
+
+  @supports selector(body:has(input:focus)) {
+    body:has(input:focus) .mobile-cta,
+    body:has(select:focus) .mobile-cta {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+    }
+  }
+}
+
+@media (max-width: 420px) {
+  .hero h1 {
+    font-size: 30px;
+  }
+
+  .hero-lead {
+    font-size: 18px;
+  }
+
+  .doctor-proof {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .doctor-proof > span {
+    width: fit-content;
+  }
+
+  .portrait-stage {
+    height: 322px;
+  }
+
+  .doctor-card {
+    height: 295px;
+  }
+
+  .professor-card {
+    height: 168px;
+  }
+
+  .section h2 {
+    font-size: 28px;
+  }
+
+  .benefit-card {
+    grid-template-columns: 38px minmax(0, 1fr);
+    padding: 18px 15px;
+  }
+
+  .benefit-card h3 {
+    font-size: 18px;
+  }
+
+  .topic-card h3,
+  .topic-card.culture h3 {
+    font-size: 22px;
+  }
+
+  .schedule-card li {
+    grid-template-columns: 91px minmax(0, 1fr);
+  }
+
+  .reassurance-copy h2 {
+    font-size: 26px;
+  }
+
+  .registration h2 {
+    font-size: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
   }
 }
