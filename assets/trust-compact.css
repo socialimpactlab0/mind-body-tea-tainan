@@ -1,0 +1,143 @@
+/* 2026-09-03：將免費茶會說明收斂為簡短、自然、可查證的區塊 */
+
+.reassurance {
+  padding: 18px 0 78px;
+}
+
+.reassurance-card {
+  display: block;
+  width: min(900px, 100%);
+  margin-inline: auto;
+  overflow: hidden;
+  border: 1px solid rgba(67, 111, 90, .17);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 8% 14%, rgba(231, 239, 233, .9), transparent 21rem),
+    rgba(255, 253, 248, .94);
+  box-shadow: 0 22px 56px rgba(53, 73, 62, .08);
+}
+
+.reassurance-copy {
+  padding: 46px 52px;
+  background: transparent;
+}
+
+.reassurance-copy h2 {
+  max-width: 720px;
+  margin: 0;
+  color: #24382c;
+  font: 700 clamp(32px, 3.4vw, 44px)/1.42 var(--serif);
+  letter-spacing: .025em;
+}
+
+.reassurance-copy p,
+.reassurance-copy p:first-of-type {
+  max-width: 760px;
+  margin: 18px 0 0;
+  color: #4f6258;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.9;
+}
+
+.reassurance-copy p:first-of-type {
+  color: #40564a;
+  font-size: 16px;
+}
+
+.reassurance-meta {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(67, 111, 90, .17);
+}
+
+.reassurance-contact-label {
+  display: block;
+  color: #6a786f;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+}
+
+.reassurance-phones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-top: 8px;
+}
+
+.reassurance-phones a {
+  color: #7b3f2e;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.reassurance-button {
+  flex: 0 0 auto;
+  width: fit-content;
+  margin: 0;
+}
+
+@media (max-width: 760px) {
+  .reassurance {
+    padding: 2px 0 58px;
+  }
+
+  .reassurance-card {
+    border-radius: 23px;
+  }
+
+  .reassurance-copy {
+    padding: 29px 21px;
+  }
+
+  .reassurance-copy h2 {
+    font-size: 27px;
+    line-height: 1.43;
+  }
+
+  .reassurance-copy p,
+  .reassurance-copy p:first-of-type {
+    margin-top: 14px;
+    font-size: 15px;
+    line-height: 1.78;
+  }
+
+  .reassurance-meta {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 17px;
+    margin-top: 22px;
+    padding-top: 18px;
+  }
+
+  .reassurance-contact-label {
+    font-size: 13px;
+  }
+
+  .reassurance-phones {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .reassurance-phones a {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(67, 111, 90, .19);
+    border-radius: 13px;
+    background: rgba(255, 253, 248, .82);
+    font-size: 17px;
+  }
+
+  .reassurance-button {
+    width: 100%;
+  }
+}
