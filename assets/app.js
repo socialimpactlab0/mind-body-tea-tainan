@@ -262,6 +262,11 @@
         partySize: partySize
       });
 
+      // 只有 Google Sheet 已確認報名成功後，才通知 Meta 完成註冊。
+      if (typeof window.TEA_META_TRACK_COMPLETE_REGISTRATION === "function") {
+        window.TEA_META_TRACK_COMPLETE_REGISTRATION(result.recordId || "");
+      }
+
       form.hidden = true;
       successState.hidden = false;
       successState.scrollIntoView({ behavior: "smooth", block: "center" });
